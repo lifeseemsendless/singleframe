@@ -1,107 +1,473 @@
-<div id="video-viewport">
-    <video id="bg-video" autoplay muted loop playsinline></video>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLURR STUDIOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --accent: #00f5a0;
+    --accent2: #00c3ff;
+    --bg: #030508;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(0,245,160,0.3);
+    --text: #e8eaf0;
+    --muted: rgba(232,234,240,0.45);
+    --font-display: 'Space Mono', monospace;
+    --font-body: 'Space Grotesk', sans-serif;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+  }
+
+  /* VIDEO BACKGROUND */
+  #video-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+  #video-bg.loaded { opacity: 1; }
+
+  /* Layered overlay for readability */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse at center, transparent 0%, rgba(3,5,8,0.65) 100%),
+      linear-gradient(180deg, rgba(3,5,8,0.55) 0%, rgba(3,5,8,0.2) 50%, rgba(3,5,8,0.7) 100%);
+  }
+
+  /* Scanline texture */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.06) 2px,
+      rgba(0,0,0,0.06) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* MAIN LAYOUT */
+  .shell {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 2.5rem;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: auto;
+  }
+
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: #fff;
+  }
+
+  .wordmark span {
+    color: var(--accent);
+  }
+
+  .location-tag {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .header-meta p {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .header-meta .version {
+    color: var(--accent);
+  }
+
+  /* VIDEO INDICATOR */
+  .vid-indicator {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .vid-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .vid-dot.active { background: var(--accent); }
+
+  /* SERVICES */
+  .services {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin: auto 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .card {
+    background: rgba(3,5,8,0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    min-height: 180px;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,245,160,0.05) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card:hover {
+    background: rgba(0,245,160,0.04);
+  }
+
+  .card:hover::before { opacity: 1; }
+  .card:hover::after { transform: scaleX(1); }
+
+  .card-num {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+    color: #fff;
+    flex: 1;
+  }
+
+  .card-arrow {
+    font-size: 1rem;
+    color: var(--muted);
+    transition: color 0.3s, transform 0.3s;
+    align-self: flex-end;
+  }
+
+  .card:hover .card-arrow {
+    color: var(--accent);
+    transform: translate(3px, -3px);
+  }
+
+  /* FOOTER */
+  footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .contact-col p {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+  }
+
+  .contact-col a {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .contact-col a:hover { color: var(--accent); }
+
+  .contact-col.center { text-align: center; }
+  .contact-col.right { text-align: right; }
+
+  .brand-mark {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  /* DETAIL OVERLAY */
+  .detail-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(3,5,8,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .detail-overlay.open { display: flex; }
+
+  .detail-box {
+    max-width: 520px;
+    width: 100%;
+    border: 1px solid var(--border-hover);
+    padding: 3rem;
+    position: relative;
+    background: rgba(3,5,8,0.6);
+  }
+
+  .detail-box::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 2rem; right: 2rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .detail-label {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .detail-box h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .detail-box p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+  }
+
+  .close-btn {
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--text);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 0.65rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .close-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<video id="video-bg" autoplay muted loop playsinline></video>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+
+<div class="shell">
+
+  <header>
+    <div>
+      <div class="wordmark">BLURR<span>.</span>STUDIOS</div>
+      <span class="location-tag">MALTA // GLOBAL OPERATIONS</span>
+    </div>
+
+    <div class="vid-indicator" id="vidIndicator"></div>
+
+    <div class="header-meta">
+      <p>EST 2024</p>
+      <p class="version">VERSION 2.0.4</p>
+    </div>
+  </header>
+
+  <div class="services">
+    <div class="card" onclick="openDetail('Web Development', 'We architect high-performance digital ecosystems. Using cutting-edge tech stacks like Next.js and headless CMS solutions, we ensure your web presence is fast, secure, and future-proof.')">
+      <span class="card-num">01</span>
+      <h3>WEB<br>DEVELOPMENT</h3>
+      <span class="card-arrow">↗</span>
+    </div>
+    <div class="card" onclick="openDetail('Mobile App Design', 'Native-inspired mobile experiences. We focus on high-fidelity animations, gesture-based navigation, and conversion-optimized interfaces for iOS and Android.')">
+      <span class="card-num">02</span>
+      <h3>MOBILE APP<br>DESIGN</h3>
+      <span class="card-arrow">↗</span>
+    </div>
+    <div class="card" onclick="openDetail('UI/UX Consulting', 'We analyze user behavior through data and psychological mapping. Our consulting provides a roadmap for frictionless journeys and world-class aesthetics.')">
+      <span class="card-num">03</span>
+      <h3>UI / UX<br>CONSULTING</h3>
+      <span class="card-arrow">↗</span>
+    </div>
+    <div class="card" onclick="openDetail('Digital Strategy', 'Hyper-targeted growth. From algorithmic SEO to precision-based marketing funnels, we scale your digital footprint across every relevant vertical.')">
+      <span class="card-num">04</span>
+      <h3>DIGITAL<br>STRATEGY</h3>
+      <span class="card-arrow">↗</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="contact-col">
+      <p>Direct Line</p>
+      <a href="tel:+35699027669">+356 9902 7669</a>
+    </div>
+    <div class="contact-col center">
+      <p>General Inquiries</p>
+      <a href="mailto:sgharshs@gmail.com">sgharshs@gmail.com</a>
+    </div>
+    <div class="contact-col right">
+      <p>Digital Agency</p>
+      <span class="brand-mark">BLURR®</span>
+    </div>
+  </footer>
+
 </div>
 
-<div class="overlay-grid"></div>
-
-<div class="main-frame">
-    <div class="main-container">
-        
-        <header>
-            <div class="logo-area">
-                <h1>BLURR<br>STUDIOS</h1>
-                <span class="location-tag">MALTA // GLOBAL OPERATIONS</span>
-            </div>
-            <div style="text-align: right">
-                <p style="font-size: 0.7rem; letter-spacing: 3px;">EST 2024</p>
-                <p style="font-size: 0.7rem; color: var(--accent)">VERSION 2.0.4</p>
-            </div>
-        </header>
-
-        <div class="services-grid">
-            <div class="service-card" onclick="openService('Web Development', 'We architect high-performance digital ecosystems. Using cutting-edge tech stacks like Next.js and headless CMS solutions, we ensure your web presence is fast, secure, and future-proof.')">
-                <div class="plus">+</div>
-                <h3>WEB<br>DEVELOPMENT</h3>
-            </div>
-
-            <div class="service-card" onclick="openService('Mobile Design', 'Native-inspired mobile experiences. We focus on high-fidelity animations, gesture-based navigation, and conversion-optimized interfaces for iOS and Android.')">
-                <div class="plus">+</div>
-                <h3>MOBILE APP<br>DESIGN</h3>
-            </div>
-
-            <div class="service-card" onclick="openService('UI/UX Consulting', 'We analyze user behavior through data and psychological mapping. Our consulting provides a roadmap for frictionless journeys and world-class aesthetics.')">
-                <div class="plus">+</div>
-                <h3>UI/UX<br>CONSULTING</h3>
-            </div>
-
-            <div class="service-card" onclick="openService('Digital Strategy', 'Hyper-targeted growth. From algorithmic SEO to precision-based marketing funnels, we scale your digital footprint across every relevant vertical.')">
-                <div class="plus">+</div>
-                <h3>DIGITAL<br>STRATEGY</h3>
-            </div>
-        </div>
-
-        <footer>
-            <div class="contact-block">
-                <p>Direct Line</p>
-                <a href="tel:+35699027669">+356 9902 7669</a>
-            </div>
-            <div class="contact-block" style="text-align: center;">
-                <p>General Inquiries</p>
-                <a href="mailto:sgharshs@gmail.com">sgharshs@gmail.com</a>
-            </div>
-            <div class="contact-block" style="text-align: right;">
-                <p>Digital Agency</p>
-                <a>BLURR®</a>
-            </div>
-        </footer>
-
-    </div>
-</div>
-
-<!-- Expansion UI -->
-<div id="detailView" class="service-detail">
-    <div class="detail-content">
-        <h2 id="detailTitle">SERVICE</h2>
-        <p id="detailDesc">Description goes here.</p>
-        <button class="close-btn" onclick="closeService()">CLOSE_VIEW_</button>
-    </div>
+<!-- Detail panel -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-box">
+    <p class="detail-label">SERVICE OVERVIEW</p>
+    <h2 id="detailTitle"></h2>
+    <p id="detailDesc"></p>
+    <button class="close-btn" onclick="closeDetail()">CLOSE_VIEW_</button>
+  </div>
 </div>
 
 <script>
-        // 1. List your local video files here
-        // Make sure these names match your files exactly (e.g., clip1.mp4, clip2.mp4)
-        const videoLibrary = [
-            "clip1.mp4",
-            "clip2.mp4",
-            "clip3.mp4",
-            "clip4.mp4"
-        ];
+  const videos = [
+    "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-man-typing-on-a-keyboard-1361-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-developer-using-laptop-in-the-dark-3359-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-blue-network-connections-24019-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-lines-and-dots-in-blue-24017-large.mp4",
+    "https://assets.mixkit.co/videos/preview/mixkit-circuit-board-animation-with-moving-electrons-24021-large.mp4"
+  ];
 
-        // 2. Pick a random video from the list
-        const videoElement = document.getElementById('bg-video');
-        const randomVideo = videoLibrary[Math.floor(Math.random() * videoLibrary.length)];
-        
-        // 3. Set the source
-        videoElement.src = randomVideo;
+  const vidEl = document.getElementById('video-bg');
+  const indicator = document.getElementById('vidIndicator');
+  let current = Math.floor(Math.random() * videos.length);
 
-        // 4. Force load and play (helps with some browsers)
-        videoElement.load();
-        videoElement.play().catch(error => {
-            console.log("Autoplay was prevented. High-end browsers require 'muted' to autoplay.");
-        });
+  function buildDots() {
+    indicator.innerHTML = '';
+    videos.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'vid-dot' + (i === current ? ' active' : '');
+      d.onclick = () => switchVideo(i);
+      indicator.appendChild(d);
+    });
+  }
 
-        // Logic for expanding services (Keep existing)
-        function openService(title, desc) {
-            document.getElementById('detailTitle').innerText = title;
-            document.getElementById('detailDesc').innerText = desc;
-            document.getElementById('detailView').style.display = 'flex';
-        }
+  function switchVideo(idx) {
+    current = idx;
+    vidEl.classList.remove('loaded');
+    setTimeout(() => {
+      vidEl.src = videos[idx];
+      vidEl.load();
+      vidEl.play();
+      buildDots();
+    }, 300);
+  }
 
-        function closeService() {
-            document.getElementById('detailView').style.display = 'none';
-        }
+  vidEl.addEventListener('canplay', () => vidEl.classList.add('loaded'));
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "Escape") closeService();
-        });
-    </script>
+  vidEl.addEventListener('ended', () => {
+    switchVideo((current + 1) % videos.length);
+  });
+
+  vidEl.src = videos[current];
+  buildDots();
+
+  function openDetail(title, desc) {
+    document.getElementById('detailTitle').textContent = title;
+    document.getElementById('detailDesc').textContent = desc;
+    document.getElementById('detailOverlay').classList.add('open');
+  }
+
+  function closeDetail() {
+    document.getElementById('detailOverlay').classList.remove('open');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDetail();
+  });
+</script>
+</body>
+</html>
