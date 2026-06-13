@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-
 :root{
   --accent:#00f0a0;
   --accent2:#0af;
@@ -19,225 +18,105 @@
   --mono:'Space Mono',monospace;
   --sans:'Space Grotesk',sans-serif;
 }
-
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans)}
 
 /* ── VIDEO BG ── */
-#yt-wrap{
-  position:fixed;inset:0;z-index:0;
-  width:100%;height:100%;
-  pointer-events:none;overflow:hidden;
-}
-#yt-wrap iframe{
-  position:absolute;
-  top:50%;left:50%;
-  width:177.78vh;height:100vh;
-  min-width:100vw;min-height:56.25vw;
-  transform:translate(-50%,-50%);
-  border:none;
-  opacity:0;
-  transition:opacity 1.6s ease;
-}
+#yt-wrap{position:fixed;inset:0;z-index:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+#yt-wrap iframe{position:absolute;top:50%;left:50%;width:177.78vh;height:100vh;min-width:100vw;min-height:56.25vw;transform:translate(-50%,-50%);border:none;opacity:0;transition:opacity 1.6s ease}
 #yt-wrap iframe.show{opacity:1}
 
 /* layered darkening + color grade */
 .overlay{
   position:fixed;inset:0;z-index:1;
   background:
-    linear-gradient(180deg,rgba(2,4,10,.72) 0%,rgba(2,4,10,.3) 45%,rgba(2,4,10,.82) 100%),
+    linear-gradient(180deg,rgba(2,4,10,.82) 0%,rgba(2,4,10,.4) 45%,rgba(2,4,10,.88) 100%),
     radial-gradient(ellipse 80% 80% at 50% 50%,transparent 30%,rgba(2,4,10,.6) 100%);
 }
-/* green color tint overlay */
-.tint{
-  position:fixed;inset:0;z-index:2;
-  background:radial-gradient(ellipse 60% 50% at 50% 60%,rgba(0,240,160,.04) 0%,transparent 70%);
-  pointer-events:none;
-}
-/* scanlines */
-.scan{
-  position:fixed;inset:0;z-index:3;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);
-  pointer-events:none;
-}
+.tint{position:fixed;inset:0;z-index:2;background:radial-gradient(ellipse 60% 50% at 50% 60%,rgba(0,240,160,.04) 0%,transparent 70%);pointer-events:none}
+.scan{position:fixed;inset:0;z-index:3;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.07) 3px,rgba(0,0,0,.07) 4px);pointer-events:none}
 
 /* ── SHELL ── */
-.shell{
-  position:fixed;inset:0;z-index:10;
-  display:grid;
-  grid-template-rows:auto 1fr auto;
-  padding:2rem 2.8rem 1.8rem;
-  gap:0;
-}
+.shell{position:fixed;inset:0;z-index:10;display:grid;grid-template-rows:auto 1fr auto;padding:1.6rem 2.4rem 1.4rem;gap:0;overflow:hidden}
 
 /* ── HEADER ── */
-header{
-  display:flex;align-items:flex-start;justify-content:space-between;
-  padding-bottom:1.5rem;
-  border-bottom:1px solid var(--border);
-}
-
-.logo{
-  font-family:var(--mono);
-  font-size:clamp(1.4rem,2.5vw,2rem);
-  font-weight:700;
-  letter-spacing:.12em;
-  color:#fff;
-  line-height:1;
-}
+header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:1.2rem;border-bottom:1px solid var(--border)}
+.logo{font-family:var(--mono);font-size:clamp(1.2rem,2.2vw,1.8rem);font-weight:700;letter-spacing:.12em;color:#fff;line-height:1}
 .logo em{color:var(--accent);font-style:normal}
-.sub{
-  font-family:var(--mono);
-  font-size:.52rem;
-  letter-spacing:.28em;
-  color:var(--muted);
-  margin-top:.5rem;
-  display:block;
-}
+.sub{font-family:var(--mono);font-size:.5rem;letter-spacing:.28em;color:var(--muted);margin-top:.45rem;display:block}
 
 /* pill indicator */
-.vid-pills{
-  position:absolute;top:1.6rem;left:50%;transform:translateX(-50%);
-  display:flex;gap:5px;align-items:center;
-}
-.pill{
-  width:22px;height:3px;border-radius:2px;
-  background:var(--border);cursor:pointer;
-  transition:background .3s,width .3s;
-}
+.vid-pills{position:absolute;top:1.4rem;left:50%;transform:translateX(-50%);display:flex;gap:5px;align-items:center}
+.pill{width:22px;height:3px;border-radius:2px;background:var(--border);cursor:pointer;transition:background .3s,width .3s}
 .pill.on{background:var(--accent);width:36px}
 
 .hdr-right{text-align:right}
-.hdr-right p{font-family:var(--mono);font-size:.55rem;letter-spacing:.2em;color:var(--muted);line-height:2}
+.hdr-right p{font-family:var(--mono);font-size:.52rem;letter-spacing:.2em;color:var(--muted);line-height:2}
 .hdr-right .v{color:var(--accent)}
 
 /* ── STATUS BAR ── */
-.status{
-  display:flex;align-items:center;gap:1rem;
-  padding:.55rem .9rem;
-  border:1px solid var(--border);
-  background:rgba(0,240,160,.03);
-  width:fit-content;
-  margin-top:.9rem;
-}
+.status{display:flex;align-items:center;gap:1rem;padding:.5rem .9rem;border:1px solid var(--border);background:rgba(0,240,160,.03);width:fit-content;margin-top:.8rem}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,240,160,.5)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(0,240,160,0)}}
-.status span{font-family:var(--mono);font-size:.52rem;letter-spacing:.2em;color:var(--accent)}
+.status span{font-family:var(--mono);font-size:.5rem;letter-spacing:.2em;color:var(--accent)}
 
-/* ── SERVICES ── */
+/* ── SERVICES GRID — 4x2 ── */
 .grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
+  grid-template-rows:repeat(2,1fr);
   gap:1px;
   background:var(--border);
   border:1px solid var(--border);
   align-self:center;
-  margin:2rem 0;
+  margin:1.2rem 0;
 }
 
 .card{
   background:rgba(2,4,10,.6);
   backdrop-filter:blur(16px);
   -webkit-backdrop-filter:blur(16px);
-  padding:2.2rem 1.8rem;
+  padding:1.6rem 1.5rem;
   cursor:pointer;
   position:relative;
   overflow:hidden;
-  display:flex;flex-direction:column;gap:1rem;
-  min-height:200px;
+  display:flex;flex-direction:column;gap:.7rem;
   transition:background .3s;
 }
-
-/* glow on hover */
-.card::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 90% 90% at 20% 110%,rgba(0,240,160,.07),transparent 60%);
-  opacity:0;transition:opacity .4s;
-}
-/* bottom line sweep */
-.card::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  transform:scaleX(0);transform-origin:left;
-  transition:transform .45s cubic-bezier(.22,1,.36,1);
-}
+.card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 90% at 20% 110%,rgba(0,240,160,.07),transparent 60%);opacity:0;transition:opacity .4s}
+.card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.22,1,.36,1)}
 .card:hover{background:rgba(0,240,160,.025)}
 .card:hover::before{opacity:1}
 .card:hover::after{transform:scaleX(1)}
 
-.c-num{
-  font-family:var(--mono);font-size:.52rem;
-  letter-spacing:.25em;color:var(--accent);
-}
-.c-title{
-  font-family:var(--mono);
-  font-size:clamp(.75rem,1.1vw,.9rem);
-  font-weight:700;letter-spacing:.06em;
-  line-height:1.35;color:#fff;flex:1;
-}
-.c-desc{
-  font-size:.72rem;color:var(--muted);
-  line-height:1.6;
-  display:none; /* shown on hover via JS class */
-}
-.c-arrow{
-  align-self:flex-end;
-  font-size:1.1rem;color:var(--muted);
-  transition:color .3s,transform .3s;
-  font-family:var(--mono);
-}
+.c-num{font-family:var(--mono);font-size:.5rem;letter-spacing:.25em;color:var(--accent)}
+.c-title{font-family:var(--mono);font-size:clamp(.65rem,.95vw,.82rem);font-weight:700;letter-spacing:.06em;line-height:1.35;color:#fff;flex:1}
+.c-arrow{align-self:flex-end;font-size:1rem;color:var(--muted);transition:color .3s,transform .3s;font-family:var(--mono)}
 .card:hover .c-arrow{color:var(--accent);transform:translate(4px,-4px)}
 
 /* ── FOOTER ── */
-footer{
-  display:flex;align-items:flex-end;justify-content:space-between;
-  padding-top:1.2rem;
-  border-top:1px solid var(--border);
-}
-.f-col p{font-family:var(--mono);font-size:.5rem;letter-spacing:.22em;color:var(--muted);margin-bottom:.35rem;text-transform:uppercase}
-.f-col a,.f-col span{font-family:var(--sans);font-size:.82rem;color:var(--text);text-decoration:none;transition:color .2s}
+footer{display:flex;align-items:flex-end;justify-content:space-between;padding-top:1rem;border-top:1px solid var(--border)}
+.f-col p{font-family:var(--mono);font-size:.48rem;letter-spacing:.22em;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase}
+.f-col a,.f-col span{font-family:var(--sans);font-size:.78rem;color:var(--text);text-decoration:none;transition:color .2s}
 .f-col a:hover{color:var(--accent)}
 .f-col.mid{text-align:center}
 .f-col.right{text-align:right}
-.brand{font-family:var(--mono);font-size:.85rem;color:var(--accent);letter-spacing:.1em}
+.brand{font-family:var(--mono);font-size:.82rem;color:var(--accent);letter-spacing:.1em}
 
 /* ── DETAIL PANEL ── */
-.panel{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(2,4,10,.88);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
-  display:none;align-items:center;justify-content:center;
-  padding:2rem;
-}
+.panel{position:fixed;inset:0;z-index:200;background:rgba(2,4,10,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:none;align-items:center;justify-content:center;padding:2rem}
 .panel.open{display:flex}
-
-.pbox{
-  max-width:500px;width:100%;
-  border:1px solid var(--border-h);
-  background:rgba(2,4,10,.7);
-  padding:2.8rem 3rem;
-  position:relative;
-}
-.pbox::before{
-  content:'';position:absolute;top:-1px;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-}
-.p-label{font-family:var(--mono);font-size:.5rem;letter-spacing:.3em;color:var(--accent);margin-bottom:1rem}
-.pbox h2{font-family:var(--mono);font-size:clamp(1rem,2vw,1.5rem);font-weight:700;letter-spacing:.05em;color:#fff;margin-bottom:1.2rem;line-height:1.15}
-.pbox p{font-size:.9rem;line-height:1.8;color:var(--muted);margin-bottom:2.5rem}
-.cls{
-  font-family:var(--mono);font-size:.6rem;letter-spacing:.22em;
-  color:var(--text);background:none;
-  border:1px solid var(--border);
-  padding:.6rem 1.4rem;cursor:pointer;
-  transition:border-color .2s,color .2s;
-}
+.pbox{max-width:500px;width:100%;border:1px solid var(--border-h);background:rgba(2,4,10,.7);padding:2.6rem 2.8rem;position:relative}
+.pbox::before{content:'';position:absolute;top:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.p-label{font-family:var(--mono);font-size:.48rem;letter-spacing:.3em;color:var(--accent);margin-bottom:.9rem}
+.pbox h2{font-family:var(--mono);font-size:clamp(1rem,2vw,1.4rem);font-weight:700;letter-spacing:.05em;color:#fff;margin-bottom:1rem;line-height:1.15}
+.pbox p{font-size:.88rem;line-height:1.8;color:var(--muted);margin-bottom:2.2rem}
+.cls{font-family:var(--mono);font-size:.58rem;letter-spacing:.22em;color:var(--text);background:none;border:1px solid var(--border);padding:.55rem 1.3rem;cursor:pointer;transition:border-color .2s,color .2s}
 .cls:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
 
-<!-- YouTube iframe background — coding/tech videos -->
+<!-- YouTube background — coding/dev aesthetic videos -->
 <div id="yt-wrap">
   <iframe id="ytFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 </div>
@@ -264,6 +143,7 @@ footer{
   </header>
 
   <div class="grid">
+    <!-- Row 1 -->
     <div class="card" onclick="openPanel('Web Development','We architect high-performance digital ecosystems. Using cutting-edge tech stacks like Next.js and headless CMS solutions, we ensure your web presence is fast, secure, and future-proof.')">
       <span class="c-num">01</span>
       <div class="c-title">WEB<br>DEVELOPMENT</div>
@@ -282,6 +162,27 @@ footer{
     <div class="card" onclick="openPanel('Digital Strategy','Hyper-targeted growth. From algorithmic SEO to precision-based marketing funnels, we scale your digital footprint across every relevant vertical.')">
       <span class="c-num">04</span>
       <div class="c-title">DIGITAL<br>STRATEGY</div>
+      <span class="c-arrow">↗</span>
+    </div>
+    <!-- Row 2 -->
+    <div class="card" onclick="openPanel('Videography','Cinema-grade production for brands that demand presence. From concept to camera, we capture stories with intentional framing, lighting, and motion that commands attention.')">
+      <span class="c-num">05</span>
+      <div class="c-title">VIDEOGRAPHY</div>
+      <span class="c-arrow">↗</span>
+    </div>
+    <div class="card" onclick="openPanel('Video Editing','Post-production that elevates raw footage into polished narratives. Color grading, motion graphics, pacing, and sound design — every cut is intentional.')">
+      <span class="c-num">06</span>
+      <div class="c-title">VIDEO<br>EDITING</div>
+      <span class="c-arrow">↗</span>
+    </div>
+    <div class="card" onclick="openPanel('Content Creation','Strategic content engineered for engagement and reach. We develop platform-native assets — reels, carousels, long-form, and copy — that resonate and convert.')">
+      <span class="c-num">07</span>
+      <div class="c-title">CONTENT<br>CREATION</div>
+      <span class="c-arrow">↗</span>
+    </div>
+    <div class="card" onclick="openPanel('SEO','Data-driven search dominance. We combine technical audits, semantic architecture, and authority building to push your brand to the top — and keep it there.')">
+      <span class="c-num">08</span>
+      <div class="c-title">SEO</div>
       <span class="c-arrow">↗</span>
     </div>
   </div>
@@ -314,13 +215,13 @@ footer{
 </div>
 
 <script>
-// YouTube video IDs — dark coding/tech aesthetic
+// Coding & dev aesthetic YouTube videos
 const vids = [
-  'dqTTojTija8', // lofi coding night aesthetic
-  '6g4dkBF5anU', // matrix code rain
-  'jfKfPfyJRdk', // lofi hip hop / code bg
-  'n61ULEU7CO0', // dark coding setup timelapse
+  'hHL6scl0TUk', // dark coding setup
   'Ks0PFUMHXgI', // abstract tech / digital
+  'n61ULEU7CO0', // dark coding timelapse
+  '3bq0PjflTwQ', // terminal / dev environment
+  'ZFpf6X_-FHE', // code aesthetic / night dev
 ];
 
 const frame = document.getElementById('ytFrame');
@@ -352,9 +253,8 @@ function load(idx){
   frame.onload=()=>setTimeout(()=>frame.classList.add('show'),400);
 }
 
-// rotate every 5min
-setInterval(()=>load((cur+1)%vids.length), 300000);
-
+// rotate every 5 minutes
+setInterval(()=>load((cur+1)%vids.length),300000);
 load(0);
 
 function openPanel(t,d){
