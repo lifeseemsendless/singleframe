@@ -1,341 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLURR STUDIOS | Digital Evolution</title>
-    <!-- Google Fonts for the 'Fancy' look -->
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --accent: #00f2ff;
-            --accent-glow: rgba(0, 242, 255, 0.5);
-            --bg-dark: rgba(0, 0, 0, 0.8);
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-        }
+<div id="video-viewport">
+    <video id="bg-video" autoplay muted loop playsinline></video>
+</div>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            cursor: crosshair;
-        }
+<div class="overlay-grid"></div>
 
-        body, html {
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            background: #000;
-            font-family: 'Inter', sans-serif;
-            color: #fff;
-        }
+<div class="main-frame">
+    <div class="main-container">
+        
+        <header>
+            <div class="logo-area">
+                <h1>BLURR<br>STUDIOS</h1>
+                <span class="location-tag">MALTA // GLOBAL OPERATIONS</span>
+            </div>
+            <div style="text-align: right">
+                <p style="font-size: 0.7rem; letter-spacing: 3px;">EST 2024</p>
+                <p style="font-size: 0.7rem; color: var(--accent)">VERSION 2.0.4</p>
+            </div>
+        </header>
 
-        /* Video Background Styling */
-        #video-viewport {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
-        video {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            filter: saturate(1.2) brightness(0.5);
-        }
-
-        /* Overlay Pattern */
-        .overlay-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-            background-size: 30px 30px;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Main UI Frame */
-        .main-container {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            padding: 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            border: 20px solid transparent; /* Edge spacing */
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .logo-area h1 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 3rem;
-            letter-spacing: -2px;
-            font-weight: 700;
-            text-transform: uppercase;
-            line-height: 1;
-            text-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        .location-tag {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 5px;
-            color: var(--accent);
-            margin-top: 10px;
-            display: block;
-        }
-
-        /* Service Hexagon-ish Grid */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .service-card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border);
-            padding: 40px 25px;
-            text-align: center;
-            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent), transparent);
-            transform: translateX(-100%);
-            transition: 0.5s;
-        }
-
-        .service-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--accent);
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .service-card:hover::before {
-            transform: translateX(100%);
-        }
-
-        .service-card h3 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-
-        .service-card .plus {
-            font-size: 20px;
-            color: var(--accent);
-        }
-
-        /* Footer */
-        footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .contact-block a {
-            color: #fff;
-            text-decoration: none;
-            display: block;
-            margin-top: 8px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .contact-block a:hover {
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent);
-        }
-
-        /* Expansion Detail View */
-        .service-detail {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100;
-            display: none; /* Hidden */
-            justify-content: center;
-            align-items: center;
-            padding: 10%;
-            backdrop-filter: blur(20px);
-            animation: slideUp 0.6s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .detail-content {
-            max-width: 800px;
-            text-align: center;
-        }
-
-        .detail-content h2 {
-            font-family: 'Syncopate', sans-serif;
-            font-size: 3.5rem;
-            color: var(--accent);
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        .detail-content p {
-            font-size: 1.4rem;
-            line-height: 1.8;
-            font-weight: 200;
-            color: #ccc;
-        }
-
-        .close-btn {
-            margin-top: 50px;
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 15px 40px;
-            font-family: 'Syncopate', sans-serif;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: 0.4s;
-        }
-
-        .close-btn:hover {
-            background: var(--accent);
-            color: #000;
-            box-shadow: 0 0 30px var(--accent-glow);
-        }
-
-        /* Mobile Adjustments */
-        @media (max-width: 900px) {
-            .services-grid { grid-template-columns: 1fr 1fr; }
-            .main-container { padding: 30px; }
-            .logo-area h1 { font-size: 2rem; }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="video-viewport">
-        <video id="bg-video" autoplay muted loop playsinline></video>
-    </div>
-    
-    <div class="overlay-grid"></div>
-
-    <div class="main-frame">
-        <div class="main-container">
-            
-            <header>
-                <div class="logo-area">
-                    <h1>BLURR<br>STUDIOS</h1>
-                    <span class="location-tag">MALTA // GLOBAL OPERATIONS</span>
-                </div>
-                <div style="text-align: right">
-                    <p style="font-size: 0.7rem; letter-spacing: 3px;">EST 2024</p>
-                    <p style="font-size: 0.7rem; color: var(--accent)">VERSION 2.0.4</p>
-                </div>
-            </header>
-
-            <div class="services-grid">
-                <div class="service-card" onclick="openService('Web Development', 'We architect high-performance digital ecosystems. Using cutting-edge tech stacks like Next.js and headless CMS solutions, we ensure your web presence is fast, secure, and future-proof.')">
-                    <div class="plus">+</div>
-                    <h3>WEB<br>DEVELOPMENT</h3>
-                </div>
-
-                <div class="service-card" onclick="openService('Mobile Design', 'Native-inspired mobile experiences. We focus on high-fidelity animations, gesture-based navigation, and conversion-optimized interfaces for iOS and Android.')">
-                    <div class="plus">+</div>
-                    <h3>MOBILE APP<br>DESIGN</h3>
-                </div>
-
-                <div class="service-card" onclick="openService('UI/UX Consulting', 'We analyze user behavior through data and psychological mapping. Our consulting provides a roadmap for frictionless journeys and world-class aesthetics.')">
-                    <div class="plus">+</div>
-                    <h3>UI/UX<br>CONSULTING</h3>
-                </div>
-
-                <div class="service-card" onclick="openService('Digital Strategy', 'Hyper-targeted growth. From algorithmic SEO to precision-based marketing funnels, we scale your digital footprint across every relevant vertical.')">
-                    <div class="plus">+</div>
-                    <h3>DIGITAL<br>STRATEGY</h3>
-                </div>
+        <div class="services-grid">
+            <div class="service-card" onclick="openService('Web Development', 'We architect high-performance digital ecosystems. Using cutting-edge tech stacks like Next.js and headless CMS solutions, we ensure your web presence is fast, secure, and future-proof.')">
+                <div class="plus">+</div>
+                <h3>WEB<br>DEVELOPMENT</h3>
             </div>
 
-            <footer>
-                <div class="contact-block">
-                    <p>Direct Line</p>
-                    <a href="tel:+35699027669">+356 9902 7669</a>
-                </div>
-                <div class="contact-block" style="text-align: center;">
-                    <p>General Inquiries</p>
-                    <a href="mailto:sgharshs@gmail.com">sgharshs@gmail.com</a>
-                </div>
-                <div class="contact-block" style="text-align: right;">
-                    <p>Digital Agency</p>
-                    <a>BLURR®</a>
-                </div>
-            </footer>
+            <div class="service-card" onclick="openService('Mobile Design', 'Native-inspired mobile experiences. We focus on high-fidelity animations, gesture-based navigation, and conversion-optimized interfaces for iOS and Android.')">
+                <div class="plus">+</div>
+                <h3>MOBILE APP<br>DESIGN</h3>
+            </div>
 
+            <div class="service-card" onclick="openService('UI/UX Consulting', 'We analyze user behavior through data and psychological mapping. Our consulting provides a roadmap for frictionless journeys and world-class aesthetics.')">
+                <div class="plus">+</div>
+                <h3>UI/UX<br>CONSULTING</h3>
+            </div>
+
+            <div class="service-card" onclick="openService('Digital Strategy', 'Hyper-targeted growth. From algorithmic SEO to precision-based marketing funnels, we scale your digital footprint across every relevant vertical.')">
+                <div class="plus">+</div>
+                <h3>DIGITAL<br>STRATEGY</h3>
+            </div>
         </div>
-    </div>
 
-    <!-- Expansion UI -->
-    <div id="detailView" class="service-detail">
-        <div class="detail-content">
-            <h2 id="detailTitle">SERVICE</h2>
-            <p id="detailDesc">Description goes here.</p>
-            <button class="close-btn" onclick="closeService()">CLOSE_VIEW_</button>
-        </div>
-    </div>
+        <footer>
+            <div class="contact-block">
+                <p>Direct Line</p>
+                <a href="tel:+35699027669">+356 9902 7669</a>
+            </div>
+            <div class="contact-block" style="text-align: center;">
+                <p>General Inquiries</p>
+                <a href="mailto:sgharshs@gmail.com">sgharshs@gmail.com</a>
+            </div>
+            <div class="contact-block" style="text-align: right;">
+                <p>Digital Agency</p>
+                <a>BLURR®</a>
+            </div>
+        </footer>
 
-    <script>
-        // List of tech-related stock video links
+    </div>
+</div>
+
+<!-- Expansion UI -->
+<div id="detailView" class="service-detail">
+    <div class="detail-content">
+        <h2 id="detailTitle">SERVICE</h2>
+        <p id="detailDesc">Description goes here.</p>
+        <button class="close-btn" onclick="closeService()">CLOSE_VIEW_</button>
+    </div>
+</div>
+
+<script>
+        // 1. List your local video files here
+        // Make sure these names match your files exactly (e.g., clip1.mp4, clip2.mp4)
         const videoLibrary = [
-            "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-blue-network-connections-24019-large.mp4",
-            "https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-lines-and-dots-in-blue-24017-large.mp4",
-            "https://assets.mixkit.co/videos/preview/mixkit-circuit-board-animation-with-moving-electrons-24021-large.mp4",
-            "https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-background-1610-large.mp4"
+            "clip1.mp4",
+            "clip2.mp4",
+            "clip3.mp4",
+            "clip4.mp4"
         ];
 
-        // Pick random video on load
+        // 2. Pick a random video from the list
         const videoElement = document.getElementById('bg-video');
         const randomVideo = videoLibrary[Math.floor(Math.random() * videoLibrary.length)];
+        
+        // 3. Set the source
         videoElement.src = randomVideo;
 
-        // Logic for expanding services
+        // 4. Force load and play (helps with some browsers)
+        videoElement.load();
+        videoElement.play().catch(error => {
+            console.log("Autoplay was prevented. High-end browsers require 'muted' to autoplay.");
+        });
+
+        // Logic for expanding services (Keep existing)
         function openService(title, desc) {
             document.getElementById('detailTitle').innerText = title;
             document.getElementById('detailDesc').innerText = desc;
@@ -346,10 +101,7 @@
             document.getElementById('detailView').style.display = 'none';
         }
 
-        // Close on ESC key
         document.addEventListener('keydown', (e) => {
             if (e.key === "Escape") closeService();
         });
     </script>
-</body>
-</html>
